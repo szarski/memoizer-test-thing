@@ -4,7 +4,7 @@ context "When Interactors::ImportantThing#call sums arguments and has a side eff
   before(:all) do
     module Interactors
       class Base
-        include Memoizer
+        extend Memoizer
       end
 
       class ImportantThing < Base
@@ -46,6 +46,8 @@ context "When Interactors::ImportantThing#call sums arguments and has a side eff
   end
 
   context "When memoization is present" do
+    before {subject.class.memoize}
+
     context "When different arguments are passed" do
       it "returns different values" do
         expect(subject.call(1,2,3)).to eq(6)
