@@ -4,6 +4,7 @@ context "When Interactors::ImportantThing#call sums arguments and has a side eff
   before(:all) do
     module Interactors
       class Base
+        include Memoizer
       end
 
       class ImportantThing < Base
@@ -38,6 +39,23 @@ context "When Interactors::ImportantThing#call sums arguments and has a side eff
     context "when the same arguments are passed" do
       it "runs the side effect every time" do
         expect(subject).to receive(:side_effect).twice
+        subject.call(1,2,3)
+        subject.call(1,2,3)
+      end
+    end
+  end
+
+  context "When memoization is present" do
+    context "When different arguments are passed" do
+      it "returns different values" do
+        expect(subject.call(1,2,3)).to eq(6)
+        expect(subject.call(4,5,6)).to eq(15)
+      end
+    end
+
+    context "when the same arguments are passed" do
+      it "runs the side effect only once" do
+        expect(subject).to receive(:side_effect).once
         subject.call(1,2,3)
         subject.call(1,2,3)
       end
